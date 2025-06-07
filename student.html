@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Dashboard - EduPortal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #f9f9fb;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 220px;
+      background: #764ba2;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding-top: 2rem;
+    }
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+    .nav-btn {
+      padding: 1rem 1.5rem;
+      border: none;
+      background: transparent;
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      border-left: 4px solid transparent;
+      transition: background 0.3s, border-left-color 0.3s;
+      text-align: left;
+    }
+    .nav-btn:hover, .nav-btn.active {
+      background: #5a3785;
+      border-left-color: #e0aaff;
+    }
+    .main-content {
+      flex-grow: 1;
+      padding: 2rem 3rem;
+      overflow-y: auto;
+      background: white;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    header h1 {
+      font-weight: 700;
+      color: #333;
+    }
+    .logout-btn {
+      background: #764ba2;
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 0.5rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .logout-btn:hover {
+      background: #5a3785;
+    }
+    section {
+      flex-grow: 1;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(118, 75, 162, 0.2);
+      background: #faf9ff;
+      display: none;
+    }
+    section.active-section {
+      display: block;
+    }
+    button {
+      transition: transform 0.15s ease;
+    }
+    button:active {
+      transform: scale(0.95);
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin-top: 0;
+      color: #444;
+    }
+    .card p {
+      color: #666;
+    }
+    .btn-primary {
+      background: #764ba2;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      margin-top: 0.5rem;
+    }
+    .btn-primary:hover {
+      background: #5a3785;
+    }
+    .progress-container {
+      margin-top: 1rem;
+    }
+    .progress-item {
+      margin-bottom: 1rem;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    progress {
+      width: 100%;
+      height: 10px;
+      border-radius: 5px;
+    }
+    progress::-webkit-progress-bar {
+      background-color: #ecf0f1;
+      border-radius: 5px;
+    }
+    progress::-webkit-progress-value {
+      background-color: #764ba2;
+      border-radius: 5px;
+    }
+    .resource-link {
+      display: block;
+      color: #764ba2;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .resource-link:hover {
+      text-decoration: underline;
+    }
+    #liveClassModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    #liveClassModal iframe {
+      width: 90vw;
+      height: 90vh;
+      border: none;
+      border-radius: 10px;
+    }
+    #liveClassModal button {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      background: #764ba2;
+      border: none;
+      padding: 0.6rem 1rem;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    /* Assignments table styles */
+    #assignments table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    #assignments th, #assignments td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    #assignments th {
+      background: #764ba2;
+      color: white;
+      font-weight: 600;
+    }
+    #assignments tr:hover {
+      background-color: #f3edfc;
+    }
+    #assignments td a {
+      background: #764ba2;
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+    #assignments td a:hover {
+      background: #5a3785;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h2>Student Panel</h2>
+  <button class="nav-btn active" data-section="quizzes">Quizzes</button>
+  <button class="nav-btn" data-section="assignments">Assignments</button>
+  <button class="nav-btn" data-section="live">Live Classes</button>
+  <button class="nav-btn" data-section="resources">Resources</button>
+  <button class="nav-btn" data-section="progress">Progress</button>
+</div>
+
+<div class="main-content">
+  <header>
+    <h1>Welcome, Student</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
+
+  <!-- Quizzes -->
+  <section id="quizzes" class="active-section">
+    <h2>Available Quizzes</h2>
+    <div class="card">
+      <h3>JavaScript Basics</h3>
+      <p>Test your knowledge of fundamental JavaScript concepts</p>
+      <button class="btn-primary">Start Quiz</button>
+    </div>
+    <div class="card">
+      <h3>HTML & CSS</h3>
+      <p>Assessment on web markup and styling</p>
+      <button class="btn-primary">Start Quiz</button>
+    </div>
+  </section>
+
+  <!-- Assignments -->
+  <section id="assignments">
+    <h2>Uploaded Files</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Uploaded By</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="fileList"></tbody>
+    </table>
+  </section>
+
+  <!-- Live Classes -->
+  <section id="live">
+    <h2>Join Live Class</h2>
+    <div class="card">
+      <h3>Today's Class: Advanced JavaScript</h3>
+      <p>Time: 10:00 AM - 11:30 AM</p>
+      <button class="btn-primary" id="joinClassBtn">Join Class Now</button>
+    </div>
+  </section>
+
+  <!-- Resources -->
+  <section id="resources">
+    <h2>Learning Resources</h2>
+    <div class="card">
+      <h3>Study Materials</h3>
+      <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" class="resource-link" target="_blank">JavaScript Documentation</a>
+      <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" class="resource-link" target="_blank">HTML Reference</a>
+      <a href="https://developer.mozilla.org/en-US/docs/Web/CSS" class="resource-link" target="_blank">CSS Reference</a>
+    </div>
+  </section>
+
+  <!-- Progress -->
+  <section id="progress">
+    <h2>Your Progress</h2>
+    <div class="card">
+      <h3>Course Completion</h3>
+      <div class="progress-container">
+        <div class="progress-item">
+          <div class="progress-label">
+            <span>Quizzes</span>
+            <span>60%</span>
+          </div>
+          <progress value="60" max="100"></progress>
+        </div>
+        <div class="progress-item">
+          <div class="progress-label">
+            <span>Assignments</span>
+            <span>80%</span>
+          </div>
+          <progress value="80" max="100"></progress>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Live Class Modal -->
+<div id="liveClassModal">
+  <button onclick="closeLiveClass()">Close</button>
+  <iframe id="liveIframe" src="" allow="camera; microphone; fullscreen"></iframe>
+</div>
+
+<script>
+  // Navigation logic
+  const navButtons = document.querySelectorAll('.nav-btn');
+  const sections = document.querySelectorAll('section');
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.getAttribute('data-section');
+      sections.forEach(sec => {
+        sec.classList.toggle('active-section', sec.id === target);
+      });
+    });
+  });
+
+  function logout() {
+    window.location.href = "index.html";
+  }
+
+  document.getElementById('joinClassBtn').addEventListener('click', () => {
+    openLiveClass("https://meet.google.com/lookup/demo-class");
+  });
+
+  function openLiveClass(link) {
+    const modal = document.getElementById('liveClassModal');
+    const iframe = document.getElementById('liveIframe');
+    iframe.src = link;
+    modal.style.display = 'flex';
+  }
+
+  function closeLiveClass() {
+    const modal = document.getElementById('liveClassModal');
+    const iframe = document.getElementById('liveIframe');
+    iframe.src = '';
+    modal.style.display = 'none';
+  }
+
+  function loadFiles() {
+    let files = JSON.parse(localStorage.getItem("files")) || [];
+    let fileList = document.getElementById("fileList");
+    fileList.innerHTML = "";
+
+    files.forEach((file, index) => {
+      let row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${file.name}</td>
+        <td>${file.uploadedBy}</td>
+        <td><a href="${file.url}" download="${file.name}">Download</a></td>
+      `;
+      fileList.appendChild(row);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", loadFiles);
+</script>
+</body>
+</html>

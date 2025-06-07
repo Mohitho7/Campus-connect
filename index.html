@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EduPortal Login</title> 
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-container {
+    background: white;
+    padding: 2.5rem 3rem;
+    border-radius: 15px;
+    width: 350px;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  h2 {
+    margin-bottom: 1.5rem;
+    color: #4b3ca7;
+  }
+  .role-selection {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .role-btn {
+    flex: 1;
+    margin: 0 0.5rem;
+    padding: 0.8rem 0;
+    border: 2px solid #764ba2;
+    border-radius: 8px;
+    background: transparent;
+    color: #764ba2;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+  }
+  .role-btn.active,
+  .role-btn:hover {
+    background: #764ba2;
+    color: white;
+  }
+  form {
+    text-align: left;
+  }
+  label {
+    display: block;
+    margin: 1rem 0 0.3rem;
+    font-weight: 600;
+    color: #333;
+  }
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    border: 1.8px solid #ddd;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    border-color: #764ba2;
+    outline: none;
+  }
+  button[type="submit"] {
+    margin-top: 2rem;
+    width: 100%;
+    padding: 0.8rem 0;
+    border: none;
+    border-radius: 8px;
+    background: #764ba2;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button[type="submit"]:hover {
+    background: #5a3785;
+  }
+  /* Micro animation: button pulse */
+  button[type="submit"]:active {
+    transform: scale(0.97);
+  }
+</style>
+</head>
+<body>
+
+<div class="login-container">
+  <h2>EduPortal Login</h2>
+  <div class="role-selection">
+    <button class="role-btn active" id="facultyBtn">Faculty</button>
+    <button class="role-btn" id="studentBtn">Student</button>
+  </div>
+  <form id="loginForm">
+    <label for="username">Username</label>
+    <input type="text" id="username" required autocomplete="off" />
+    <label for="password">Password</label>
+    <input type="password" id="password" required autocomplete="off" />
+    <button type="submit">Login</button>
+  </form>
+</div>
+
+<script>
+  const facultyBtn = document.getElementById('facultyBtn');
+  const studentBtn = document.getElementById('studentBtn');
+  let selectedRole = 'faculty';
+
+  facultyBtn.addEventListener('click', () => {
+    selectedRole = 'faculty';
+    facultyBtn.classList.add('active');
+    studentBtn.classList.remove('active');
+  });
+
+  studentBtn.addEventListener('click', () => {
+    selectedRole = 'student';
+    studentBtn.classList.add('active');
+    facultyBtn.classList.remove('active');
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    // For demo, just redirect based on role
+    if(selectedRole === 'faculty') {
+      window.location.href = 'faculty.html';
+    } else {
+      window.location.href = 'student.html';
+    }
+  });
+</script>
+
+</body>
+</html>

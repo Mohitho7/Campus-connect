@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /> 
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Faculty Dashboard - EduPortal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #f9f9fb;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: #764ba2;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding-top: 2rem;
+  }
+  .sidebar h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 700;
+  }
+  .nav-btn {
+    padding: 1rem 1.5rem;
+    border: none;
+    background: transparent;
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    transition: background 0.3s, border-left-color 0.3s;
+    text-align: left;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    background: #5a3785;
+    border-left-color: #e0aaff;
+  }
+  /* Main content */
+  .main-content {
+    flex-grow: 1;
+    padding: 2rem 3rem;
+    overflow-y: auto;
+    background: white;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  header h1 {
+    font-weight: 700;
+    color: #333;
+  }
+  .logout-btn {
+    background: #764ba2;
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .logout-btn:hover {
+    background: #5a3785;
+  }
+  /* Section styles */
+  section {
+    flex-grow: 1;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.2);
+    background: #faf9ff;
+    display: none;
+  }
+  section.active-section {
+    display: block;
+  }
+  /* Micro animation for buttons */
+  button {
+    transition: transform 0.15s ease;
+  }
+  button:active {
+    transform: scale(0.95);
+  }
+  /* Form styling */
+  form {
+    margin-top: 1rem;
+  }
+  label {
+    display: block;
+    font-weight: 600;
+    margin: 0.8rem 0 0.4rem;
+    color: #444;
+  }
+  input[type="text"],
+  input[type="date"],
+  input[type="url"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border-radius: 6px;
+    border: 1.5px solid #ccc;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus,
+  input[type="date"]:focus,
+  input[type="url"]:focus,
+  textarea:focus,
+  select:focus {
+    border-color: #764ba2;
+    outline: none;
+  }
+  textarea {
+    min-height: 80px;
+  }
+  /* Button styles */
+  .btn-primary {
+    margin-top: 1.2rem;
+    background: #764ba2;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .btn-primary:hover {
+    background: #5a3785;
+  }
+  /* Quiz question card */
+  .question-card {
+    border: 1px solid #ddd;
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+  }
+  .option-input {
+    margin-left: 1rem;
+  }
+  .add-question-btn {
+    background: transparent;
+    border: 2px dashed #764ba2;
+    color: #764ba2;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 1rem;
+  }
+  .add-question-btn:hover {
+    background: #764ba2;
+    color: white;
+  }
+  /* Attendance preview table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  th, td {
+    border: 1px solid #aaa;
+    padding: 0.6rem;
+    text-align: left;
+  }
+  th {
+    background: #764ba2;
+    color: white;
+  }
+  /* Live class iframe modal */
+  #liveClassModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right:0;
+    bottom:0;
+    background: rgba(0,0,0,0.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  #liveClassModal iframe {
+    width: 90vw;
+    height: 90vh;
+    border: none;
+    border-radius: 10px;
+  }
+  #liveClassModal button {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    background: #764ba2;
+    border: none;
+    padding: 0.6rem 1rem;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  
+  /* Assignments specific styles */
+  .container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .upload-btn, .clear-btn {
+    background-color: #764ba2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+  }
+  
+  .upload-btn:hover, .clear-btn:hover {
+    background-color: #5a3785;
+  }
+  
+  .switch {
+    color: #764ba2;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  
+  .switch:hover {
+    text-decoration: underline;
+  }
+  
+  input[type="file"] {
+    margin-bottom: 15px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  table, th, td {
+    border: 1px solid #ddd;
+  }
+  
+  th, td {
+    padding: 12px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #764ba2;
+    color: white;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  a {
+    color: #764ba2;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h2>Faculty Panel</h2>
+  <button class="nav-btn active" data-section="quizzes">Quizzes</button>
+  <button class="nav-btn" data-section="assignments">Assignments</button>
+  <button class="nav-btn" data-section="live">Live Classes</button>
+  <button class="nav-btn" data-section="attendance">Attendance</button>
+  <button class="nav-btn" data-section="resources">Resources</button>
+</div>
+
+<div class="main-content">
+  <header>
+    <h1>Welcome, Faculty</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </header>
+  
+
+  <!-- Quizzes -->
+  <section id="quizzes" class="active-section">
+    <h2>Create Quiz</h2>
+    <form id="quizForm">
+      <label for="quizTitle">Quiz Title</label>
+      <input type="text" id="quizTitle" placeholder="Enter quiz title" required />
+      <div id="questionsContainer">
+        <!-- Questions will be added here -->
+      </div>
+      <button type="button" class="add-question-btn" id="addQuestionBtn">+ Add Question</button>
+      <br />
+      <button type="submit" class="btn-primary">Upload Quiz</button>
+    </form>
+  </section>
+
+  <!-- Assignments -->
+  <section id="assignments">
+    <div class="container" id="uploadSection">
+      <h2>Upload Assignment</h2>
+      <form id="uploadForm">
+          <label for="teacher_name">Your Name:</label>
+          <input type="text" id="teacher_name" name="teacher_name" required><br><br>
+
+          <label for="file">Choose File (PDF only):</label>
+          <input type="file" id="file" name="file" accept=".pdf" required><br><br>
+
+          <button type="submit" class="upload-btn">Upload</button>
+      </form>
+      <br>
+      <a href="#" class="switch" onclick="showFiles()">View Uploaded Files</a>
+    </div>
+
+    <div class="container" id="fileListSection" style="display: none;">
+        <h2>Uploaded Assignments</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Uploaded By</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="fileList"></tbody>
+        </table>
+        <br>
+        <button class="clear-btn" onclick="clearAllFiles()">Clear All Files</button>
+        <br><br>
+        <a href="#" class="switch" onclick="showUpload()">Upload New File</a>
+    </div>
+  </section>
+
+  <!-- Live Classes -->
+  <section id="live">
+    <h2>Start Live Class</h2>
+    <form id="liveForm">
+      <label for="liveLink">Google Meet Link</label>
+      <input type="url" id="liveLink" placeholder="https://meet.google.com/xyz-abc" required />
+      <button type="submit" class="btn-primary">Start Class</button>
+    </form>
+  </section>
+
+  <!-- Attendance -->
+  <section id="attendance">
+    <h2>Upload Attendance Sheet</h2>
+    <form id="attendanceForm" enctype="multipart/form-data">
+      <label for="attendanceFile">Upload CSV or Excel File</label>
+      <input type="file" id="attendanceFile" accept=".csv,.xls,.xlsx" required />
+      <button type="submit" class="btn-primary">Upload Attendance</button>
+    </form>
+    <div id="attendancePreview"></div>
+  </section>
+
+  <!-- Resources -->
+  <section id="resources">
+    <h2>Upload Resource</h2>
+    <form id="resourceForm" enctype="multipart/form-data">
+      <label for="resourceTitle">Resource Title</label>
+      <input type="text" id="resourceTitle" placeholder="Enter resource title" required />
+      <label for="resourceFile">Upload File</label>
+      <input type="file" id="resourceFile" accept=".pdf,.doc,.ppt,.jpg,.png" />
+      <button type="submit" class="btn-primary">Upload Resource</button>
+    </form>
+  </section>
+</div>
+
+<!-- Live Class Modal -->
+<div id="liveClassModal">
+  <button onclick="closeLiveClass()">Close</button>
+  <iframe id="liveIframe" src="" allow="camera; microphone; fullscreen"></iframe>
+</div>
+
+<script>
+  // Navigation logic
+  const navButtons = document.querySelectorAll('.nav-btn');
+  const sections = document.querySelectorAll('section');
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.getAttribute('data-section');
+      sections.forEach(sec => {
+        sec.classList.toggle('active-section', sec.id === target);
+      });
+    });
+  });
+
+  function logout() {
+    window.location.href = "index.html";
+  }
+
+  // Quiz form logic
+  const questionsContainer = document.getElementById('questionsContainer');
+  const addQuestionBtn = document.getElementById('addQuestionBtn');
+
+  // Create a question card
+  function createQuestionCard(index) {
+    const div = document.createElement('div');
+    div.className = 'question-card';
+    div.dataset.index = index;
+
+    div.innerHTML = `
+      <label>Question ${index + 1}</label>
+      <input type="text" class="question-text" placeholder="Enter question" required />
+      <label>Options (Select correct answer)</label>
+      <div>
+        <input type="radio" name="correct-${index}" value="0" required /> <input type="text" class="option-input" placeholder="Option 1" required />
+      </div>
+      <div>
+        <input type="radio" name="correct-${index}" value="1" required /> <input type="text" class="option-input" placeholder="Option 2" required />
+      </div>
+      <div>
+        <input type="radio" name="correct-${index}" value="2" required /> <input type="text" class="option-input" placeholder="Option 3" required />
+      </div>
+      <div>
+        <input type="radio" name="correct-${index}" value="3" required /> <input type="text" class="option-input" placeholder="Option 4" required />
+      </div>
+    `;
+    return div;
+  }
+
+  // Add first question on page load
+  let questionCount = 0;
+  questionsContainer.appendChild(createQuestionCard(questionCount));
+  questionCount++;
+
+  addQuestionBtn.addEventListener('click', () => {
+    questionsContainer.appendChild(createQuestionCard(questionCount));
+    questionCount++;
+  });
+
+  // Handle quiz form submit
+  document.getElementById('quizForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const quizTitle = document.getElementById('quizTitle').value.trim();
+    if(!quizTitle) {
+      alert('Quiz title is required.');
+      return;
+    }
+
+    const questions = [];
+    const questionCards = questionsContainer.querySelectorAll('.question-card');
+    for(let card of questionCards) {
+      const questionText = card.querySelector('.question-text').value.trim();
+      const optionInputs = card.querySelectorAll('.option-input');
+      const options = Array.from(optionInputs).map(input => input.value.trim());
+      const radios = card.querySelectorAll('input[type="radio"]');
+      let correctIndex = -1;
+      for(let radio of radios) {
+        if(radio.checked) {
+          correctIndex = parseInt(radio.value);
+          break;
+        }
+      }
+      if(!questionText || options.some(opt => !opt) || correctIndex === -1) {
+        alert('Please fill all questions, options, and select correct answer.');
+        return;
+      }
+      questions.push({question: questionText, options, correctAnswer: correctIndex});
+    }
+
+    // Simulate saving the quiz
+    console.log('Quiz saved:', {title: quizTitle, questions});
+    alert(`Quiz "${quizTitle}" uploaded successfully!`);
+    e.target.reset();
+    questionsContainer.innerHTML = '';
+    questionCount = 0;
+    questionsContainer.appendChild(createQuestionCard(questionCount));
+    questionCount++;
+  });
+
+  // Assignment form submit
+  document.addEventListener("DOMContentLoaded", function () {
+    if (document.getElementById("uploadForm")) {
+      document.getElementById("uploadForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        let teacherName = document.getElementById("teacher_name").value;
+        let fileInput = document.getElementById("file").files[0];
+
+        if (fileInput && fileInput.type === "application/pdf") {
+          let confirmUpload = confirm("Are you sure you want to upload this file?");
+          if (!confirmUpload) {
+            alert("Upload cancelled.");
+            return;
+          }
+
+          let reader = new FileReader();
+          reader.onload = function (e) {
+            let fileData = {
+              name: fileInput.name,
+              uploadedBy: teacherName,
+              url: e.target.result
+            };
+
+            let files = JSON.parse(localStorage.getItem("files")) || [];
+            files.push(fileData);
+            localStorage.setItem("files", JSON.stringify(files));
+
+            alert("File uploaded successfully!");
+            showFiles();
+          };
+          reader.readAsDataURL(fileInput);
+        } else {
+          alert("Only PDF files are allowed!");
+        }
+      });
+    }
+    loadFiles();
+  });
+
+  function loadFiles() {
+    let files = JSON.parse(localStorage.getItem("files")) || [];
+    let fileList = document.getElementById("fileList");
+    fileList.innerHTML = "";
+
+    files.forEach((file, index) => {
+      let row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${file.name}</td>
+        <td>${file.uploadedBy}</td>
+        <td><a href="${file.url}" download="${file.name}">Download</a></td>
+      `;
+      fileList.appendChild(row);
+    });
+  }
+
+  function clearAllFiles() {
+    if (confirm("Are you sure you want to delete all uploaded files?")) {
+      localStorage.removeItem("files");
+      loadFiles();
+      alert("All uploaded files have been cleared!");
+    }
+  }
+
+  function showFiles() {
+    document.getElementById("uploadSection").style.display = "none";
+    document.getElementById("fileListSection").style.display = "block";
+    loadFiles();
+  }
+
+  function showUpload() {
+    document.getElementById("uploadSection").style.display = "block";
+    document.getElementById("fileListSection").style.display = "none";
+  }
+
+  // Live class form submit
+  document.getElementById('liveForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const link = document.getElementById('liveLink').value.trim();
+    if(!link || !link.startsWith('https://')) {
+      alert('Please enter a valid Google Meet link.');
+      return;
+    }
+    openLiveClass(link);
+  });
+
+  function openLiveClass(link) {
+    const modal = document.getElementById('liveClassModal');
+    const iframe = document.getElementById('liveIframe');
+    iframe.src = link;
+    modal.style.display = 'flex';
+  }
+  
+  function closeLiveClass() {
+    const modal = document.getElementById('liveClassModal');
+    const iframe = document.getElementById('liveIframe');
+    iframe.src = '';
+    modal.style.display = 'none';
+  }
+
+  // Attendance upload (preview first 5 rows)
+  document.getElementById('attendanceForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const fileInput = document.getElementById('attendanceFile');
+    const file = fileInput.files[0];
+    if(!file) {
+      alert('Please select a file');
+      return;
+    }
+
+    const previewDiv = document.getElementById('attendancePreview');
+    previewDiv.innerHTML = '<p>Parsing attendance file...</p>';
+
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+      const text = event.target.result;
+      // Simple CSV parse demo
+      const rows = text.split('\n').filter(r => r.trim().length > 0);
+      if(rows.length === 0) {
+        previewDiv.innerHTML = '<p>File is empty or invalid format.</p>';
+        return;
+      }
+      let tableHTML = '<table><thead><tr>';
+      const headers = rows[0].split(',');
+      for(let h of headers) {
+        tableHTML += `<th>${h.trim()}</th>`;
+      }
+      tableHTML += '</tr></thead><tbody>';
+      for(let i=1; i < Math.min(rows.length, 6); i++) {
+        const cols = rows[i].split(',');
+        tableHTML += '<tr>';
+        for(let c of cols) {
+          tableHTML += `<td>${c.trim()}</td>`;
+        }
+        tableHTML += '</tr>';
+      }
+      tableHTML += '</tbody></table>';
+      previewDiv.innerHTML = `<h3>Attendance Preview (first 5 rows):</h3>${tableHTML}`;
+      alert('Attendance uploaded successfully!');
+      e.target.reset();
+    };
+    reader.readAsText(file);
+  });
+
+  // Resource upload
+  document.getElementById('resourceForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const title = document.getElementById('resourceTitle').value.trim();
+    if(!title) {
+      alert('Resource title is required.');
+      return;
+    }
+    alert(`Resource "${title}" uploaded successfully!`);
+    e.target.reset();
+  });
+</script>
+</body>
+</html>
