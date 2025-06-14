@@ -1,1 +1,1 @@
-# Campus-connect
+It's just a sneak peek of the upcoming app that will be fully functional.
